@@ -5,40 +5,71 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeButton = document.querySelector('.close-button');
     const homeworkList = document.querySelector('.homework-list');
     let activeHomeworkId = null;
+    let activeContext = 'School'; // Default context
 
     // --- Data ---
-    const homeworkData = [
-        {
-            id: 'hw1',
-            title: 'Maths Assignment',
-            description: 'Chapter 5, exercises 1-10',
-            dueDate: 'Oct 26',
-            completed: false,
-            comments: ['This looks tough!', 'I need help with question 5.'],
-            reactions: ['👍', '😮'],
-        },
-        {
-            id: 'hw2',
-            title: 'History Essay',
-            description: 'The French Revolution',
-            dueDate: 'Oct 28',
-            completed: true,
-            comments: [],
-            reactions: ['💯'],
-        },
-        {
-            id: 'hw3',
-            title: 'Science Project',
-            description: 'Build a model of a volcano.',
-            dueDate: 'Nov 02',
-            completed: false,
-            comments: [],
-            reactions: [],
-        },
-    ];
+    const allHomework = {
+        'School': [
+            {
+                id: 'hw1',
+                title: 'Maths Assignment',
+                description: 'Chapter 5, exercises 1-10',
+                dueDate: 'Oct 26',
+                completed: false,
+                comments: ['This looks tough!', 'I need help with question 5.'],
+                reactions: ['👍', '😮'],
+                image: 'https://via.placeholder.com/150',
+                uploadTime: '10:30 AM',
+            },
+            {
+                id: 'hw2',
+                title: 'History Essay',
+                description: 'The French Revolution',
+                dueDate: 'Oct 28',
+                completed: true,
+                comments: [],
+                reactions: ['💯'],
+                image: 'https://via.placeholder.com/150',
+                uploadTime: '1:00 PM',
+            },
+        ],
+        'Math Club': [
+            {
+                id: 'mc1',
+                title: 'Calculus Problems',
+                description: 'Solve the attached worksheet.',
+                dueDate: 'Oct 29',
+                completed: false,
+                comments: [],
+                reactions: [],
+                image: 'https://via.placeholder.com/150',
+                uploadTime: '3:45 PM',
+            },
+        ],
+        'Night School': [
+            {
+                id: 'ns1',
+                title: 'Creative Writing',
+                description: 'Write a short story (500 words).',
+                dueDate: 'Nov 05',
+                completed: false,
+                comments: [],
+                reactions: [],
+                image: 'https://via.placeholder.com/150',
+                uploadTime: '8:15 PM',
+            },
+        ]
+    };
 
     // --- Render Function ---
     const renderHomework = () => {
+        console.log(`Rendering homework for context: "${activeContext}"`);
+        const homeworkData = allHomework[activeContext];
+        if (!homeworkData) {
+            console.error('No data found for this context!');
+            return;
+        }
+        console.log(`Found ${homeworkData.length} items to render.`);
         homeworkList.innerHTML = ''; // Clear existing items
         homeworkData.forEach(item => {
             const homeworkItem = document.createElement('div');
@@ -46,15 +77,21 @@ document.addEventListener('DOMContentLoaded', () => {
             homeworkItem.dataset.id = item.id;
 
             homeworkItem.innerHTML = `
-                <div class="homework-status">
+                <div class="homework-pill">
                     <span class="due-date">${item.dueDate}</span>
-                    <input type="checkbox" id="${item.id}" name="${item.id}" ${item.completed ? 'checked' : ''}>
-                    <label for="${item.id}"></label>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="${item.id}" name="${item.id}" ${item.completed ? 'checked' : ''}>
+                        <label for="${item.id}"></label>
+                    </div>
                 </div>
-                <div class="homework-details">
-                    <h3>${item.title}</h3>
-                    <p>${item.description}</p>
+                <div class="homework-content">
+                    <div class="homework-details">
+                        <h3>${item.title}</h3>
+                        <p>${item.description}</p>
+                    </div>
+                    <img src="${item.image}" alt="${item.title}" class="homework-image">
                 </div>
+                <span class="upload-time">${item.uploadTime}</span>
             `;
             homeworkList.appendChild(homeworkItem);
         });
@@ -66,29 +103,27 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!homeworkItem) return;
 
         const clickedItemId = homeworkItem.dataset.id;
-        const homework = homeworkData.find(item => item.id === clickedItemId);
+        const homework = allHomework[activeContext].find(item => item.id === clickedItemId);
 
-        // Checkbox click
-        if (e.target.matches('input[type="checkbox"]') || e.target.matches('label')) {
+        // If click is on the pill, handle checkbox logic only
+        if (e.target.closest('.homework-pill')) {
             const checkbox = homeworkItem.querySelector('input[type="checkbox"]');
-             // Let the 'change' event handle the logic
-            if(e.target.matches('label')) {
+            // If the label was clicked, manually toggle the checkbox state
+            if (e.target.matches('label')) {
                 checkbox.checked = !checkbox.checked;
             }
             homework.completed = checkbox.checked;
             homeworkItem.classList.toggle('completed', checkbox.checked);
-            return; // Stop further execution
+            return; // Stop propagation to prevent modal opening
         }
 
-        // Open modal for other clicks
+        // Open modal for other clicks on the item
         activeHomeworkId = clickedItemId;
         document.getElementById('modal-title').textContent = homework.title;
         document.getElementById('modal-description').textContent = homework.description;
 
-        // Render comments
+        // Render comments and reactions
         renderComments(homework.comments);
-
-        // Render reactions
         renderReactions(homework.reactions);
 
         modal.style.display = 'block';
@@ -100,17 +135,65 @@ document.addEventListener('DOMContentLoaded', () => {
         sidebar.classList.toggle('collapsed');
     });
 
-    const uploadButton = document.getElementById('upload-btn');
+    const dropzone = document.getElementById('dropzone');
     const fileUpload = document.getElementById('file-upload');
-    uploadButton.addEventListener('click', () => fileUpload.click());
-    fileUpload.addEventListener('change', () => {
-        if (fileUpload.files.length > 0) {
-            console.log(`File uploaded: ${fileUpload.files[0].name}`);
+    const addHomeworkModal = document.getElementById('add-homework-modal');
+    const addHomeworkForm = document.getElementById('add-homework-form');
+
+    dropzone.addEventListener('click', () => fileUpload.click());
+
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('dragover');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        if (e.dataTransfer.files.length > 0) {
+            fileUpload.files = e.dataTransfer.files;
+            addHomeworkModal.style.display = 'block';
         }
     });
 
-    document.getElementById('comment-btn').addEventListener('click', () => console.log('Comment button clicked'));
-    document.getElementById('subject-btn').addEventListener('click', () => console.log('Subject button clicked'));
+    fileUpload.addEventListener('change', () => {
+        if (fileUpload.files.length > 0) {
+            addHomeworkModal.style.display = 'block';
+        }
+    });
+
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(date);
+    };
+
+    addHomeworkForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newHomework = {
+            id: `hw${Date.now()}`,
+            title: document.getElementById('new-homework-title').value,
+            description: document.getElementById('new-homework-description').value,
+            dueDate: formatDate(document.getElementById('new-homework-due-date').value),
+            completed: false,
+            comments: [],
+            reactions: [],
+            image: URL.createObjectURL(fileUpload.files[0]),
+            uploadTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        };
+        allHomework[activeContext].push(newHomework);
+        renderHomework();
+        addHomeworkModal.style.display = 'none';
+        addHomeworkForm.reset();
+    });
+
+    addHomeworkModal.querySelector('.close-button').addEventListener('click', () => {
+        addHomeworkModal.style.display = 'none';
+    });
 
     const renderComments = (comments) => {
         const commentsContainer = document.getElementById('comments-container');
@@ -127,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const commentInput = document.getElementById('comment-input');
         const newComment = commentInput.value.trim();
         if (newComment && activeHomeworkId) {
-            const homework = homeworkData.find(item => item.id === activeHomeworkId);
+            const homework = allHomework[activeContext].find(item => item.id === activeHomeworkId);
             homework.comments.push(newComment);
             renderComments(homework.comments);
             commentInput.value = '';
@@ -148,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.emoji-btn').forEach(button => {
         button.addEventListener('click', () => {
             if (activeHomeworkId) {
-                const homework = homeworkData.find(item => item.id === activeHomeworkId);
+                const homework = allHomework[activeContext].find(item => item.id === activeHomeworkId);
                 homework.reactions.push(button.textContent);
                 renderReactions(homework.reactions);
             }
@@ -162,18 +245,62 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const magneticButtons = document.querySelectorAll('.action-btn');
-    magneticButtons.forEach(button => {
-        button.addEventListener('mousemove', (e) => {
-            const { offsetX, offsetY, target } = e;
-            const { clientWidth, clientHeight } = target;
-            const x = (offsetX / clientWidth) * 2 - 1;
-            const y = (offsetY / clientHeight) * 2 - 1;
-            target.style.transform = `translate(${x * 10}px, ${y * 10}px)`;
+    // --- View & Context Switching ---
+    const navLinks = document.querySelectorAll('.classes-nav a');
+    const homeworkView = document.getElementById('homework-view');
+    const profileView = document.getElementById('profile-view');
+    const profileBtn = document.getElementById('profile-btn');
+    const profileForm = document.getElementById('profile-form');
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('--- Nav link clicked ---');
+
+            // Switch to homework view if on profile page
+            profileView.style.display = 'none';
+            homeworkView.style.display = 'block';
+
+            // Switch context
+            const span = e.currentTarget.querySelector('span');
+            if (span) {
+                activeContext = span.textContent;
+                console.log('New context set:', activeContext);
+            } else {
+                console.error('Could not find span in nav link!');
+            }
+
+            navLinks.forEach(l => l.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+
+            renderHomework();
         });
-        button.addEventListener('mouseleave', (e) => e.target.style.transform = '');
+    });
+
+    profileBtn.addEventListener('click', () => {
+        homeworkView.style.display = 'none';
+        profileView.style.display = 'block';
+        navLinks.forEach(l => l.classList.remove('active')); // De-select nav items
+    });
+
+    profileForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        console.log('Profile changes saved!');
+    });
+
+
+    // --- Refraction Effect ---
+    navLinks.forEach(link => {
+        link.addEventListener('mousemove', (e) => {
+            const rect = link.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            link.style.setProperty('--x', `${x}px`);
+            link.style.setProperty('--y', `${y}px`);
+        });
     });
 
     // --- Initial Render ---
     renderHomework();
+    navLinks[0].classList.add('active'); // Set default active link
 });

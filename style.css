@@ -39,9 +39,13 @@ body {
 }
 
 .sidebar-header {
-    display: flex;
-    justify-content: flex-end;
     margin-bottom: 2rem;
+}
+
+.sidebar-title {
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin: 0;
 }
 
 .sidebar-toggle {
@@ -50,6 +54,7 @@ body {
     cursor: pointer;
     color: var(--primary-color);
     transition: transform 0.2s;
+    z-index: 1001; /* Ensure it's above other content */
 }
 
 .sidebar-toggle:hover {
@@ -72,11 +77,36 @@ body {
     font-weight: 400;
 }
 
-.classes-nav a:hover {
-    background-image: linear-gradient(to right, var(--primary-color), var(--accent-color));
-    color: white;
-    transform: translateX(10px) scale(1.02);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.classes-nav a {
+    position: relative;
+    overflow: hidden;
+}
+
+.classes-nav a:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    z-index: 1;
+    transition: opacity 0.3s;
+    opacity: 0;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.classes-nav a:hover:before, .classes-nav a.active:before {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(circle at var(--x) var(--y), black 50px, transparent 150px);
+    mask-image: radial-gradient(circle at var(--x) var(--y), black 50px, transparent 150px);
+}
+
+.classes-nav a span {
+    position: relative;
+    z-index: 2;
 }
 
 .profile {
@@ -99,9 +129,15 @@ body {
 }
 
 .main-header {
+    display: flex;
+    align-items: center;
     padding: 1rem 2rem;
     border-bottom: 1px solid var(--border-color);
     background-color: #fff;
+}
+
+.main-header h1 {
+    margin-left: 1rem;
 }
 
 .main-header h1 {
@@ -116,9 +152,9 @@ body {
 
 .homework-item {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     background-color: #fff;
-    padding: 1.5rem;
+    padding: 1rem;
     border-radius: 12px;
     margin-bottom: 1.5rem;
     box-shadow: 0 4px 12px var(--shadow-color);
@@ -133,21 +169,42 @@ body {
 
 .homework-item.completed {
     opacity: 0.6;
+}
+
+.homework-item.completed .homework-details h3,
+.homework-item.completed .homework-details p {
     text-decoration: line-through;
 }
 
-.homework-status {
+.homework-pill {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    margin-right: 1.5rem;
+    background-color: var(--secondary-color);
+    padding: 1rem;
+    border-radius: 10px;
+    margin-right: 1rem;
 }
 
 .due-date {
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--primary-color);
-    margin-bottom: 0.5rem;
+}
+
+.checkbox-container {
+    margin-top: 1rem;
+}
+
+.homework-content {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+}
+
+.homework-details {
+    flex-grow: 1;
 }
 
 .homework-details h3 {
@@ -160,6 +217,21 @@ body {
     color: #666;
 }
 
+.homework-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-left: 1rem;
+}
+
+.upload-time {
+    font-size: 0.8rem;
+    color: #999;
+    align-self: flex-end;
+    margin-left: 1rem;
+}
+
 .main-footer {
     padding: 1rem 2rem;
     border-top: 1px solid var(--border-color);
@@ -168,7 +240,67 @@ body {
     justify-content: space-around;
 }
 
-.action-btn {
+.dropzone {
+    width: 100%;
+    padding: 2rem;
+    border: 2px dashed var(--border-color);
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.dropzone.dragover {
+    background-color: var(--secondary-color);
+    border-color: var(--primary-color);
+}
+
+#add-homework-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#add-homework-form input {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+}
+
+#add-homework-form button {
+    padding: 0.8rem 1.8rem;
+    border: none;
+}
+.profile-content {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 2rem;
+}
+
+#profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 400px;
+}
+
+#profile-form input {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+}
+
+#profile-form button {
     padding: 0.8rem 1.8rem;
     border: none;
     background-image: linear-gradient(to right, var(--primary-color), var(--accent-color));
@@ -178,11 +310,6 @@ body {
     transition: transform 0.3s, box-shadow 0.3s;
     font-family: 'Poppins', sans-serif;
     font-weight: 400;
-}
-
-.action-btn:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
 .modal {

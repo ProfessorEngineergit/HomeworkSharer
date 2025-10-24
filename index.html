@@ -11,36 +11,56 @@
     <div class="app-container">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <button class="sidebar-toggle">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-                </button>
+                <h2 class="sidebar-title">Homework-Sharer</h2>
             </div>
             <nav class="classes-nav">
                 <ul>
-                    <li><a href="#">Class 1</a></li>
-                    <li><a href="#">Class 2</a></li>
-                    <li><a href="#">Workgroup A</a></li>
+                    <li><a href="#"><span>School</span></a></li>
+                    <li><a href="#"><span>Math Club</span></a></li>
+                    <li><a href="#"><span>Night School</span></a></li>
                 </ul>
             </nav>
             <div class="profile">
-                <img src="https://via.placeholder.com/40" alt="Profile">
+                <img src="https://via.placeholder.com/40" alt="Profile" id="profile-btn">
             </div>
         </aside>
         <main class="main-content">
-            <header class="main-header">
-                <h1>Homework</h1>
-            </header>
-            <section class="homework-list">
-                <!-- Homework items will be dynamically rendered here -->
-            </section>
-            <footer class="main-footer">
-                <input type="file" id="file-upload" style="display: none;">
-                <button class="action-btn" id="upload-btn">Upload</button>
-                <button class="action-btn" id="comment-btn">Comment</button>
-                <button class="action-btn" id="subject-btn">Subject</button>
-            </footer>
+            <div id="homework-view">
+                 <header class="main-header">
+                    <button class="sidebar-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <h1>Homework</h1>
+                </header>
+                <section class="homework-list">
+                    <!-- Homework items will be dynamically rendered here -->
+                </section>
+                <footer class="main-footer">
+                    <div id="dropzone" class="dropzone">
+                        <p>Drag & drop a file or click to select</p>
+                        <input type="file" id="file-upload" style="display: none;">
+                    </div>
+                </footer>
+            </div>
+            <div id="profile-view" style="display: none;">
+                <header class="main-header">
+                    <h1>Profile</h1>
+                </header>
+                <section class="profile-content">
+                    <img src="https://via.placeholder.com/150" alt="Profile" class="profile-avatar">
+                    <form id="profile-form">
+                        <label for="profile-name">Name:</label>
+                        <input type="text" id="profile-name" value="Jules">
+                        <label for="profile-email">Email:</label>
+                        <input type="email" id="profile-email" value="jules@example.com">
+                        <button type="submit">Save Changes</button>
+                    </form>
+                </section>
+            </div>
         </main>
     </div>
+
+    <!-- Homework Details Modal -->
     <div id="homework-modal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
@@ -71,6 +91,25 @@
                     <button class="emoji-btn">🎉</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Add New Homework Modal -->
+    <div id="add-homework-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Add New Homework</h2>
+            <form id="add-homework-form">
+                <label for="new-homework-title">Topic:</label>
+                <input type="text" id="new-homework-title" required>
+                <label for="new-homework-description">Description:</label>
+                <input type="text" id="new-homework-description">
+                <label for="new-homework-due-date">Due Date:</label>
+                <input type="date" id="new-homework-due-date" required>
+                <label for="new-homework-subject">Subject:</label>
+                <input type="text" id="new-homework-subject" required>
+                <button type="submit">Save</button>
+            </form>
         </div>
     </div>
     <script src="main.js"></script>

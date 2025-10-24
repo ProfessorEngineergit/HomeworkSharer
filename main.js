@@ -70,15 +70,22 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         console.log(`Found ${homeworkData.length} items to render.`);
-        homeworkList.innerHTML = ''; // Clear existing items
-        homeworkData.forEach(item => {
+
+        // Fade out
+        homeworkList.style.opacity = 0;
+
+        setTimeout(() => {
+            homeworkList.innerHTML = ''; // Clear existing items
+            homeworkData.forEach((item, index) => {
             const homeworkItem = document.createElement('div');
+            homeworkItem.style.animation = `stagger-in 0.5s ${index * 0.1}s both`;
             homeworkItem.className = `homework-item ${item.completed ? 'completed' : ''}`;
             homeworkItem.dataset.id = item.id;
 
             homeworkItem.innerHTML = `
                 <div class="homework-pill">
                     <span class="due-date">${item.dueDate}</span>
+                    <div class="completed-label">Completed</div>
                     <div class="checkbox-container">
                         <input type="checkbox" id="${item.id}" name="${item.id}" ${item.completed ? 'checked' : ''}>
                         <label for="${item.id}"></label>
@@ -94,6 +101,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="upload-time">${item.uploadTime}</span>
             `;
             homeworkList.appendChild(homeworkItem);
+            });
+            // Fade in
+            homeworkList.style.opacity = 1;
+            setupCheckboxListeners();
+        }, 300); // Wait for fade out to complete
+    };
+
+    const setupCheckboxListeners = () => {
+        const checkboxes = homeworkList.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                const homeworkItem = e.target.closest('.homework-item');
+                const clickedItemId = homeworkItem.dataset.id;
+                const homework = allHomework[activeContext].find(item => item.id === clickedItemId);
+
+                homework.completed = e.target.checked;
+                homeworkItem.classList.toggle('completed', e.target.checked);
+            });
         });
     };
 
@@ -105,22 +130,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const clickedItemId = homeworkItem.dataset.id;
         const homework = allHomework[activeContext].find(item => item.id === clickedItemId);
 
-        // If click is on the pill, handle checkbox logic only
-        if (e.target.closest('.homework-pill')) {
-            const checkbox = homeworkItem.querySelector('input[type="checkbox"]');
-            // If the label was clicked, manually toggle the checkbox state
-            if (e.target.matches('label')) {
-                checkbox.checked = !checkbox.checked;
-            }
-            homework.completed = checkbox.checked;
-            homeworkItem.classList.toggle('completed', checkbox.checked);
-            return; // Stop propagation to prevent modal opening
+        // Prevent modal from opening if a checkbox was clicked
+        if (e.target.closest('.checkbox-container')) {
+            return;
         }
 
         // Open modal for other clicks on the item
         activeHomeworkId = clickedItemId;
         document.getElementById('modal-title').textContent = homework.title;
         document.getElementById('modal-description').textContent = homework.description;
+
+        // Set the download link
+        const downloadLink = document.getElementById('download-link');
+        downloadLink.href = homework.image;
+        downloadLink.download = `homework-${homework.id}.jpg`;
 
         // Render comments and reactions
         renderComments(homework.comments);

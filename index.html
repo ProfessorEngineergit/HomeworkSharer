@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Homework Sharing App</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
@@ -30,28 +31,7 @@
                 <h1>Homework</h1>
             </header>
             <section class="homework-list">
-                <div class="homework-item">
-                    <div class="homework-status">
-                        <span class="due-date">Oct 26</span>
-                        <input type="checkbox" id="hw1" name="hw1">
-                        <label for="hw1"></label>
-                    </div>
-                    <div class="homework-details">
-                        <h3>Maths Assignment</h3>
-                        <p>Chapter 5, exercises 1-10</p>
-                    </div>
-                </div>
-                <div class="homework-item">
-                    <div class="homework-status">
-                        <span class="due-date">Oct 28</span>
-                        <input type="checkbox" id="hw2" name="hw2" checked>
-                        <label for="hw2"></label>
-                    </div>
-                    <div class="homework-details">
-                        <h3>History Essay</h3>
-                        <p>The French Revolution</p>
-                    </div>
-                </div>
+                <!-- Homework items will be dynamically rendered here -->
             </section>
             <footer class="main-footer">
                 <input type="file" id="file-upload" style="display: none;">
@@ -64,18 +44,32 @@
     <div id="homework-modal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
-            <h2>Maths Assignment</h2>
-            <p>Chapter 5, exercises 1-10</p>
+            <h2 id="modal-title">Maths Assignment</h2>
+            <p id="modal-description">Chapter 5, exercises 1-10</p>
             <div class="modal-actions">
                 <button>Download</button>
             </div>
             <div class="comments-section">
                 <h3>Comments</h3>
-                <!-- Comments will be dynamically added here -->
+                <div id="comments-container">
+                    <!-- Comments will be dynamically added here -->
+                </div>
+                <div class="comment-input-area">
+                    <input type="text" id="comment-input" placeholder="Add a comment...">
+                    <button id="post-comment-btn">Post</button>
+                </div>
             </div>
             <div class="reactions-section">
                 <h3>Reactions</h3>
-                <!-- Emoji reactions will be here -->
+                <div id="reactions-container">
+                    <!-- Reactions will be dynamically added here -->
+                </div>
+                <div class="emoji-buttons">
+                    <button class="emoji-btn">👍</button>
+                    <button class="emoji-btn">😮</button>
+                    <button class="emoji-btn">💯</button>
+                    <button class="emoji-btn">🎉</button>
+                </div>
             </div>
         </div>
     </div>

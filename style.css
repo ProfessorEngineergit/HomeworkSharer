@@ -12,10 +12,46 @@
 body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
-    background-color: var(--secondary-color);
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
     color: var(--text-color);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow: hidden; /* Prevent scrollbars from appearing for the blobs */
+}
+
+body::before,
+body::after {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    filter: blur(150px);
+    z-index: -1;
+}
+
+body::before {
+    background-color: var(--primary-color);
+    top: -50px;
+    left: -50px;
+    animation: moveBlob1 15s infinite alternate;
+}
+
+body::after {
+    background-color: var(--accent-color);
+    bottom: -50px;
+    right: -50px;
+    animation: moveBlob2 20s infinite alternate;
+}
+
+@keyframes moveBlob1 {
+    from { transform: translate(0, 0); }
+    to { transform: translate(100px, 150px); }
+}
+
+@keyframes moveBlob2 {
+    from { transform: translate(0, 0); }
+    to { transform: translate(-150px, -100px); }
 }
 
 .app-container {
@@ -25,17 +61,22 @@ body {
 
 .sidebar {
     width: 250px;
-    background-color: #fff;
-    border-right: 1px solid var(--border-color);
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    margin: 1rem;
     display: flex;
     flex-direction: column;
     padding: 1.5rem;
-    box-shadow: 5px 0 15px var(--shadow-color);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .sidebar.collapsed {
-    transform: translateX(-100%);
+    transform: translateX(-120%);
+    opacity: 0;
+    transform: scale(0.9);
 }
 
 .sidebar-header {
@@ -132,8 +173,6 @@ body {
     display: flex;
     align-items: center;
     padding: 1rem 2rem;
-    border-bottom: 1px solid var(--border-color);
-    background-color: #fff;
 }
 
 .main-header h1 {
@@ -154,9 +193,11 @@ body {
 .homework-item {
     display: flex;
     align-items: stretch;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     padding: 1rem;
-    border-radius: 12px;
+    border-radius: 16px;
     margin-bottom: 1.5rem;
     box-shadow: 0 4px 12px var(--shadow-color);
     transition: transform 0.3s, box-shadow 0.3s;
@@ -265,8 +306,6 @@ body {
 
 .main-footer {
     padding: 1rem 2rem;
-    border-top: 1px solid var(--border-color);
-    background-color: #fff;
     display: flex;
     justify-content: center;
 }
@@ -358,13 +397,14 @@ body {
 }
 
 .modal-content {
-    background-color: #fefefe;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     margin: 10% auto;
     padding: 25px;
-    border: 1px solid #888;
     width: 90%;
     max-width: 550px;
-    border-radius: 15px;
+    border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     animation: slideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }

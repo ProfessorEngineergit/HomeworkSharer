@@ -8,6 +8,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeContext = 'School'; // Default context
 
     // --- Data ---
+    const users = {
+        'user1': { name: 'Jules', xp: 1250, avatar: 'https://via.placeholder.com/150' },
+        'user2': { name: 'Alex', xp: 1800, avatar: 'https://via.placeholder.com/150' },
+        'user3': { name: 'Maria', xp: 950, avatar: 'https://via.placeholder.com/150' },
+        'user4': { name: 'Sam', xp: 2100, avatar: 'https://via.placeholder.com/150' }
+    };
+    let currentUser = 'user1';
+
     const allHomework = {
         'School': [
             {
@@ -63,13 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Render Function ---
     const renderHomework = () => {
-        console.log(`Rendering homework for context: "${activeContext}"`);
         const homeworkData = allHomework[activeContext];
         if (!homeworkData) {
-            console.error('No data found for this context!');
             return;
         }
-        console.log(`Found ${homeworkData.length} items to render.`);
 
         // Fade out
         homeworkList.style.opacity = 0;
@@ -85,10 +90,12 @@ document.addEventListener('DOMContentLoaded', () => {
             homeworkItem.innerHTML = `
                 <div class="homework-pill">
                     <span class="due-date">${item.dueDate}</span>
-                    <div class="completed-label">Completed</div>
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="${item.id}" name="${item.id}" ${item.completed ? 'checked' : ''}>
-                        <label for="${item.id}"></label>
+                    <div class="completion-status">
+                        <div class="completed-label">Completed</div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="${item.id}" name="${item.id}" ${item.completed ? 'checked' : ''}>
+                            <label for="${item.id}"></label>
+                        </div>
                     </div>
                 </div>
                 <div class="homework-content">
@@ -96,7 +103,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3>${item.title}</h3>
                         <p>${item.description}</p>
                     </div>
-                    <img src="${item.image}" alt="${item.title}" class="homework-image">
+                    <div class="homework-meta">
+                        <div class="reactions-container-item">
+                            ${item.reactions.map(r => `<span class="reaction">${r}</span>`).join('')}
+                        </div>
+                        <img src="${item.image}" alt="${item.title}" class="homework-image">
+                    </div>
                 </div>
                 <span class="upload-time">${item.uploadTime}</span>
             `;
@@ -137,6 +149,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Open modal for other clicks on the item
         activeHomeworkId = clickedItemId;
+
+        // Grant XP for viewing homework (placeholder for not granting for own homework)
+        users[currentUser].xp += 1;
+
         document.getElementById('modal-title').textContent = homework.title;
         document.getElementById('modal-description').textContent = homework.description;
 
@@ -209,10 +225,27 @@ document.addEventListener('DOMContentLoaded', () => {
             uploadTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         };
         allHomework[activeContext].push(newHomework);
+        users[currentUser].xp += 10;
         renderHomework();
         addHomeworkModal.style.display = 'none';
         addHomeworkForm.reset();
+        showXpNotification(10);
     });
+
+    const showXpNotification = (amount) => {
+        const notification = document.createElement('div');
+        notification.className = 'xp-notification';
+        notification.textContent = `+${amount} XP`;
+        document.body.appendChild(notification);
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    };
 
     addHomeworkModal.querySelector('.close-button').addEventListener('click', () => {
         addHomeworkModal.style.display = 'none';
@@ -278,7 +311,6 @@ document.addEventListener('DOMContentLoaded', () => {
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log('--- Nav link clicked ---');
 
             // Switch to homework view if on profile page
             profileView.style.display = 'none';
@@ -288,9 +320,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const span = e.currentTarget.querySelector('span');
             if (span) {
                 activeContext = span.textContent;
-                console.log('New context set:', activeContext);
-            } else {
-                console.error('Could not find span in nav link!');
             }
 
             navLinks.forEach(l => l.classList.remove('active'));
@@ -300,15 +329,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    const renderProfile = () => {
+        const user = users[currentUser];
+        requestAnimationFrame(() => {
+            document.getElementById('profile-name').value = user.name;
+            document.getElementById('profile-avatar').src = user.avatar;
+            document.getElementById('profile-xp').innerText = user.xp;
+        });
+    };
+
     profileBtn.addEventListener('click', () => {
         homeworkView.style.display = 'none';
+        leaderboardView.style.display = 'none';
         profileView.style.display = 'block';
         navLinks.forEach(l => l.classList.remove('active')); // De-select nav items
+        renderProfile();
     });
 
     profileForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        console.log('Profile changes saved!');
     });
 
 
@@ -326,4 +365,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Initial Render ---
     renderHomework();
     navLinks[0].classList.add('active'); // Set default active link
+
+    // --- Leaderboard ---
+    const leaderboardView = document.getElementById('leaderboard-view');
+    const leaderboardBtn = document.getElementById('leaderboard-btn');
+    const leaderboardContent = document.getElementById('leaderboard-content');
+
+    const renderLeaderboard = () => {
+        const sortedUsers = Object.values(users).sort((a, b) => b.xp - a.xp);
+        leaderboardContent.innerHTML = '';
+        sortedUsers.forEach((user, index) => {
+            const leaderboardItem = document.createElement('div');
+            leaderboardItem.className = 'leaderboard-item';
+            leaderboardItem.innerHTML = `
+                <span class="rank">${index + 1}</span>
+                <img src="${user.avatar}" alt="${user.name}" class="avatar">
+                <span class="name">${user.name}</span>
+                <span class="xp">${user.xp} XP</span>
+            `;
+            leaderboardContent.appendChild(leaderboardItem);
+        });
+    };
+
+    leaderboardBtn.addEventListener('click', () => {
+        homeworkView.style.display = 'none';
+        profileView.style.display = 'none';
+        leaderboardView.style.display = 'block';
+        navLinks.forEach(l => l.classList.remove('active'));
+        leaderboardBtn.classList.add('active');
+        renderLeaderboard();
+    });
 });

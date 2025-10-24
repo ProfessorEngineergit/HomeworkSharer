@@ -20,6 +20,9 @@
                     <li><a href="#"><span>Night School</span></a></li>
                 </ul>
             </nav>
+            <div class="leaderboard-nav">
+                <a href="#" id="leaderboard-btn"><span>Leaderboard</span></a>
+            </div>
             <div class="profile">
                 <img src="https://via.placeholder.com/40" alt="Profile" id="profile-btn">
             </div>
@@ -48,13 +51,24 @@
                 </header>
                 <section class="profile-content">
                     <img src="https://via.placeholder.com/150" alt="Profile" class="profile-avatar">
+                    <div class="xp-counter">
+                        <span id="profile-xp">0</span> XP
+                    </div>
                     <form id="profile-form">
                         <label for="profile-name">Name:</label>
-                        <input type="text" id="profile-name" value="Jules">
+                        <input type="text" id="profile-name">
                         <label for="profile-email">Email:</label>
                         <input type="email" id="profile-email" value="jules@example.com">
                         <button type="submit">Save Changes</button>
                     </form>
+                </section>
+            </div>
+            <div id="leaderboard-view" style="display: none;">
+                <header class="main-header">
+                    <h1>Leaderboard</h1>
+                </header>
+                <section id="leaderboard-content" class="leaderboard-content">
+                    <!-- Leaderboard items will be dynamically rendered here -->
                 </section>
             </div>
         </main>
@@ -114,6 +128,7 @@
             </form>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="main.js"></script>
 </body>
 </html>

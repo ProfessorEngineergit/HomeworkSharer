@@ -250,23 +250,28 @@ body::after {
     margin-top: 1rem;
 }
 
+.completion-status {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+}
+
 .completed-label {
-    display: none;
     background-color: #4CAF50;
     color: white;
     padding: 0.3rem 0.6rem;
     border-radius: 5px;
     font-size: 0.8rem;
     font-weight: 600;
-    margin-top: 0.5rem;
+    margin-right: 0.5rem;
 }
 
-.homework-item.completed .completed-label {
-    display: block;
+.homework-item:not(.completed) .completed-label {
+    display: none;
 }
 
 .homework-item.completed .checkbox-container {
-    display: none;
+    /* We no longer hide the checkbox, so it can be unchecked */
 }
 
 .homework-content {
@@ -341,6 +346,13 @@ body::after {
 #add-homework-form button {
     padding: 0.8rem 1.8rem;
     border: none;
+    background-image: linear-gradient(to right, var(--primary-color), var(--accent-color));
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
 }
 .profile-content {
     padding: 2rem;
@@ -421,18 +433,25 @@ body::after {
 }
 
 .close-button {
-    color: #aaa;
-    float: right;
-    font-size: 30px;
-    font-weight: bold;
-    transition: color 0.2s;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #fff;
+    font-size: 20px;
+    line-height: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
 }
 
 .close-button:hover,
 .close-button:focus {
-    color: var(--primary-color);
-    text-decoration: none;
-    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
 }
 
 .comment-input-area {
@@ -573,4 +592,83 @@ input[type="checkbox"]:checked + label:after {
 
 .modal-actions {
     margin-bottom: 1rem;
+}
+.leaderboard-nav {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+.leaderboard-content {
+    padding: 2rem;
+}
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+.leaderboard-item .rank {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-right: 1.5rem;
+    color: var(--primary-color);
+}
+.leaderboard-item .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 1rem;
+}
+.leaderboard-item .name {
+    flex-grow: 1;
+    font-weight: 600;
+}
+.leaderboard-item .xp {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent-color);
+}
+.xp-counter {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+.xp-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 20px;
+    font-size: 2rem;
+    font-weight: 600;
+    z-index: 1001;
+    animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    10% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    90% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+}
+.homework-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.reactions-container-item {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
 }

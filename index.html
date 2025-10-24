@@ -1,1 +1,84 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework Sharing App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <button class="sidebar-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+            </div>
+            <nav class="classes-nav">
+                <ul>
+                    <li><a href="#">Class 1</a></li>
+                    <li><a href="#">Class 2</a></li>
+                    <li><a href="#">Workgroup A</a></li>
+                </ul>
+            </nav>
+            <div class="profile">
+                <img src="https://via.placeholder.com/40" alt="Profile">
+            </div>
+        </aside>
+        <main class="main-content">
+            <header class="main-header">
+                <h1>Homework</h1>
+            </header>
+            <section class="homework-list">
+                <div class="homework-item">
+                    <div class="homework-status">
+                        <span class="due-date">Oct 26</span>
+                        <input type="checkbox" id="hw1" name="hw1">
+                        <label for="hw1"></label>
+                    </div>
+                    <div class="homework-details">
+                        <h3>Maths Assignment</h3>
+                        <p>Chapter 5, exercises 1-10</p>
+                    </div>
+                </div>
+                <div class="homework-item">
+                    <div class="homework-status">
+                        <span class="due-date">Oct 28</span>
+                        <input type="checkbox" id="hw2" name="hw2" checked>
+                        <label for="hw2"></label>
+                    </div>
+                    <div class="homework-details">
+                        <h3>History Essay</h3>
+                        <p>The French Revolution</p>
+                    </div>
+                </div>
+            </section>
+            <footer class="main-footer">
+                <input type="file" id="file-upload" style="display: none;">
+                <button class="action-btn" id="upload-btn">Upload</button>
+                <button class="action-btn" id="comment-btn">Comment</button>
+                <button class="action-btn" id="subject-btn">Subject</button>
+            </footer>
+        </main>
+    </div>
+    <div id="homework-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Maths Assignment</h2>
+            <p>Chapter 5, exercises 1-10</p>
+            <div class="modal-actions">
+                <button>Download</button>
+            </div>
+            <div class="comments-section">
+                <h3>Comments</h3>
+                <!-- Comments will be dynamically added here -->
+            </div>
+            <div class="reactions-section">
+                <h3>Reactions</h3>
+                <!-- Emoji reactions will be here -->
+            </div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>

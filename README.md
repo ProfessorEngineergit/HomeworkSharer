@@ -31,6 +31,6 @@ The earlier README listed research references on collaborative learning and mode
 
 See [LICENSE](LICENSE), which contains the GNU GPL version 3 text. This edit does not change the license file.
 
-## Development and AI assistance
+## AI assistance
 
-The default-branch history includes contributions explicitly attributed to GitHub Copilot / Google Jules ([example](https://github.com/ProfessorEngineergit/HomeworkSharer/commit/4411517455d7a33d3ee081084d25d9a8644c856b)). This documents AI involvement in those contributions; it does not establish the origin of every line or independent validation. Existing author, co-author and session records are retained.
+Some code contributions are explicitly attributed to AI tools: [Google Jules](https://github.com/ProfessorEngineergit/HomeworkSharer/commit/4411517455d7a33d3ee081084d25d9a8644c856b). This applies to those contributions, not every file.
